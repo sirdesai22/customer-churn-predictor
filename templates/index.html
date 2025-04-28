@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Churn Prediction</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-lg mx-auto bg-white shadow-md rounded-lg p-6">
+        <h1 class="text-2xl font-bold text-gray-800 mb-4">Customer Churn Prediction</h1>
+        <form method="POST" action="/predict" class="space-y-4">
+            {% for col in numerical_cols %}
+                <div>
+                    <label for="{{ col }}" class="block text-gray-700 text-sm font-bold mb-2">{{ col.replace('_', ' ').title() }}:</label>
+                    <input type="number" step="any" name="{{ col }}" id="{{ col }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                </div>
+            {% endfor %}
+
+            {% for col in categorical_cols %}
+                <div>
+                    <label for="{{ col }}" class="block text-gray-700 text-sm font-bold mb-2">{{ col.replace('_', ' ').title() }}:</label>
+                    <select name="{{ col }}" id="{{ col }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        <option value="" disabled selected>Select {{ col.replace('_', ' ').lower() }}</option>
+                        {% if col == 'gender' %}
+                            <option value="Female">Female</option>
+                            <option value="Male">Male</option>
+                        {% elif col == 'Partner' or col == 'Dependents' or col == 'PhoneService' or col == 'PaperlessBilling' %}
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        {% elif col == 'MultipleLines' %}
+                            <option value="No">No</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No phone service">No phone service</option>
+                        {% elif col == 'InternetService' %}
+                            <option value="DSL">DSL</option>
+                            <option value="Fiber optic">Fiber optic</option>
+                            <option value="No">No</No>
+                        {% elif col.startswith('OnlineSecurity') or col.startswith('OnlineBackup') or col.startswith('DeviceProtection') or col.startswith('TechSupport') or col.startswith('StreamingTV') or col.startswith('StreamingMovies') %}
+                            <option value="No">No</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No internet service">No internet service</option>
+                        {% elif col == 'Contract' %}
+                            <option value="Month-to-month">Month-to-month</option>
+                            <option value="One year">One year</option>
+                            <option value="Two year">Two year</option>
+                        {% elif col == 'PaymentMethod' %}
+                            <option value="Electronic check">Electronic check</option>
+                            <option value="Mailed check">Mailed check</option>
+                            <option value="Bank transfer (automatic)">Bank transfer (automatic)</option>
+                            <option value="Credit card (automatic)">Credit card (automatic)</option>
+                        {% endif %}
+                    </select>
+                </div>
+            {% endfor %}
+            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Predict Churn</button>
+        </form>
+
+        {% if prediction_result %}
+            <div class="mt-6">
+                <h2 class="text-lg font-semibold text-gray-800">Prediction:</h2>
+                <p class="text-gray-700">{{ prediction_result }}</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
